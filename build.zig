@@ -1,5 +1,8 @@
 const std = @import("std");
-
+const content_dir = "src/shaders/";
+inline fn thisDir() []const u8 {
+    return comptime std.fs.path.dirname(@src().file) orelse ".";
+}
 pub fn build(b: *std.build.Builder) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
@@ -12,6 +15,14 @@ pub fn build(b: *std.build.Builder) !void {
         .target = target,
         .optimize = optimize,
     });
+
+    const install_content_step = b.addInstallDirectory(.{
+        .source_dir = .{ .path = thisDir() ++ "/" ++ content_dir },
+        .install_dir = .{ .custom = "" },
+        .install_subdir = "bin/" ++ "shaders/",
+    });
+
+    exe.step.dependOn(&install_content_step.step);
 
     // Add the mach_glfw dependency, note the name here
     // should match the name in your build.zig.zon

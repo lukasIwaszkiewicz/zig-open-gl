@@ -73,7 +73,7 @@ pub fn main() !void {
     var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
     defer arena.deinit();
     const allocator = arena.allocator();
-    const s = try Shader.create(allocator, "", "");
+    const s = try Shader.create(allocator, "shaders/vs.glsl", "shaders/fs.glsl");
 
     _ = s;
 
@@ -121,7 +121,7 @@ pub fn main() !void {
     // ------------------------------------------------------------------
     const vertices = [_]f32{
         // Positions     Colors
-        0.5, -0.5, 0.0, 1.0, 0.0, 0.0, // bottom right
+        0.5, -0.5, -0.0, 1.0, 0.0, 0.0, // bottom right
         -0.5, -0.5, 0.0, 0.0, 1.0, 0.0, // bottom let
         0.0, 0.5, 0.0, 0.0, 0.0, 1.0, // top
     };
