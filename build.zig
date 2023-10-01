@@ -1,5 +1,7 @@
 const std = @import("std");
-const content_dir = "src/shaders/";
+const zstbi = @import("libs/zstbi/build.zig");
+
+const content_dir = "content/";
 inline fn thisDir() []const u8 {
     return comptime std.fs.path.dirname(@src().file) orelse ".";
 }
@@ -19,7 +21,7 @@ pub fn build(b: *std.build.Builder) !void {
     const install_content_step = b.addInstallDirectory(.{
         .source_dir = .{ .path = thisDir() ++ "/" ++ content_dir },
         .install_dir = .{ .custom = "" },
-        .install_subdir = "bin/" ++ "shaders/",
+        .install_subdir = "bin/" ++ content_dir,
     });
 
     exe.step.dependOn(&install_content_step.step);
@@ -43,6 +45,9 @@ pub fn build(b: *std.build.Builder) !void {
     // Use the mach-glfw .link helper here
     // to link the glfw library for us
     try @import("mach_glfw").link(b, exe);
+
+    const zstbi_pkg = zstbi.package(b, target, optimize, .{});
+    zstbi_pkg.link(exe);
 
     // Same as above for our gl module,
     // because we copied the gl code into the project
